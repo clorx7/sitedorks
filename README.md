@@ -2,23 +2,23 @@
 
 # About [SiteDorks](https://github.com/Zarcolio/sitedorks) ![](https://img.shields.io/static/v1?label=&message=Help%20wanted&color=green)
 
-Search Google, Bing, Ecosia, Yahoo or Yandex for a search term with several websites. A [default list](https://github.com/Zarcolio/sitedorks/blob/master/csv/sitedorks.csv) is already provided, which contains Github, Gitlab, Surveymonkey, Trello etc etc. Currently, a default list of 540 dorkable websites is available.
+Search Google, Bing, Brave, Ecosia, Yahoo or Yandex for a search term with several websites. A [default list](https://github.com/Zarcolio/sitedorks/blob/master/csv/sitedorks.csv) is already provided, which contains Github, Gitlab, Surveymonkey, Trello etc etc. Currently, a default list of 548 dorkable websites is available.
 
 By default, the following categories are on file: 
 
 * analysis(13)
-* cloud(79) 
-* comm(79)
-* dev(68)
-* docs(74)
+* cloud(80) 
+* comm(80)
+* dev(69)
+* docs(75)
 * edu(12)
-* fin(14)
+* fin(15)
 * forms(12)
-* orgs(49)
+* orgs(51)
 * other(7)
 * remote(1)
 * shortener(37)
-* social(88)
+* social(87)
 * storage(9)
 
 # Why use SiteDorks?
@@ -49,7 +49,7 @@ If you're running into trouble running SiteDorks, please drop me an [issue](http
 
 # Usage
 ```
-usage: sitedorks [-h] [-cat <category>] [-cats] [-count <count>] [-engine <engine>] [-file <file>]
+usage: sitedorks [-h] [-browser <browser>] [-cat <category>] [-cats] [-count <count>] [-engine <engine>] [-file <file>]
 [-query <query>] [-site <on|off|inurl>] [-excl <domains>] [-echo]
 
 Use your favorite search engine to search for a search term with different websites. Use single quotes around a
@@ -59,10 +59,11 @@ space, ';', '>', '|', etc.
 optional arguments:
   -h, --help            Show this help message, print categories on file (add -file to check other CSV file) and exit.
   -hh, --help2          Show the help inside a .csv file being called. Lines in the beginning of the script starting with # are displayed as help.
+  -browser <browser>    Supply the browser executable to use or use the default browser.
   -cat <category>       Choose from 1 or more categories, use ',' (comma) as delimiter. Defaults to all categories.
   -cats                 Show all categories on file, use with or without -file.
   -count <count>        How many websites are searched per query. Google has a maximum length for queries.
-  -engine <engine>      Search with 'google', 'baidu', 'bing', 'bing-ecosia', 'duckduckgo' 'yahoo' or 'yandex', defaults to 'google'.
+  -engine <engine>      Search with 'google', 'baidu', 'bing', 'brave', 'bing-ecosia', 'duckduckgo' 'yahoo' or 'yandex', defaults to 'google'.
   -file <file>          Enter a custom website list.
   -filter <string>      Only query for sites with this string.
   -query <query>        Enter a mandatory search term.
@@ -70,7 +71,7 @@ optional arguments:
   -excl <domains>       Excluded these domains from the search query.
   -echo                 Prints the search query URLs, for further use like piping or bookmarking.
   -ubb                  Updates bug bounty files (in en out scope) and exits. Uses bbrecon.
-  -wait <seconds>       Wait x seconds, defaults to 5 seconds.
+  -wait <seconds>       Wait x seconds, defaults to 7 seconds.
 ```
 
 # Examples

@@ -6,30 +6,23 @@ import webbrowser
 import sys
 import os
 import time
+from collections import defaultdict
 
-def GetCat():
-    dCatCounty = {}
+def get_categories():
+    dCatCounty = defaultdict(int)
     for sLine in lInputFile:
         sLine = sLine.strip()
-        lLine = sLine.split(",")
-        
-        if sLine[0] == "#":
+        if not sLine or sLine[0] == "#":
             continue
-        
-        if lLine[1] in dCatCounty:
-            dCatCounty[lLine[1]] = dCatCounty[lLine[1]] + 1
-        else:
-            dCatCounty[lLine[1]] = 1
-    sCatList = ""
-    for iCounter, sCat in enumerate(sorted(dCatCounty)):
-        if iCounter == len(dCatCounty)-1:
-            sCatList = sCatList + sCat + "(" + str(dCatCounty[sCat]) + ")."
-        else:
-            sCatList = sCatList + sCat + "(" + str(dCatCounty[sCat]) + "), "
-            
+        lLine = sLine.split(",")
+        if len(lLine) < 2:
+            continue
+        dCatCounty[lLine[1]] += 1
+    sCatList = "\n".join(f"  -{sCat}({dCatCounty[sCat]})" for sCat in sorted(dCatCounty))
+
     return sCatList
 
-def GetComment():
+def get_comment():
     boolHelpFound = False
     for sLine in lInputFile:
         sLine = sLine.strip()
@@ -38,14 +31,15 @@ def GetComment():
             if sLine[0] == "#":
                 print (sLine)
                 boolHelpFound = True
-            elif boolHelpFound == False:
-                    print("No help comment found in " + sInputFile)
+            elif not boolHelpFound:
+                    print(f"No help comment found in {sInputFile}")
                     exit(2)
     exit(0)
 
-sArgParser=argparse.ArgumentParser(add_help=False, description="Use your favorite search engine to search for a search term with different websites. Use single quotes around a query with double quotes. Be sure to enclose a query with single quotes it contains shell control characters like space, ';', '>', '|', etc.")
+sArgParser=argparse.ArgumentParser(add_help=False, description="""Use your favorite search engine to search for a search term with different websites. Use single quotes around a query with double quotes. Be sure to enclose a query with single quotes it contains shell control characters like space, ';', '>', '|', etc.""")
 sArgParser.add_argument('-h', '--help', help='Show this help message, print categories on file (add -file to check other CSV file) and exit.', action="store_true")
 sArgParser.add_argument("-hh", "--help2", help="Show the help inside a .csv file being called. Lines in the beginning of the script starting with # are displayed as help.", action="store_true")
+sArgParser.add_argument('-browser', metavar='<browser>', help='Supply the browser executable to use or use the default browser.', default=None)
 sArgParser.add_argument('-cat', metavar="<category>", help='Choose from 1 or more categories, use \',\' (comma) as delimiter. Defaults to all categories.')
 sArgParser.add_argument('-cats', help='Show all categories on file, use with or without -file.', action="store_true")
 sArgParser.add_argument('-count', metavar="<count>", help='How many websites are searched per query. Google has a maximum length for queries.')
@@ -57,7 +51,7 @@ sArgParser.add_argument('-site', metavar="<on|off|inurl>",help='Turn the \'site:
 sArgParser.add_argument('-excl', metavar="<domains>",  help='Excluded these domains from the search query.')
 sArgParser.add_argument('-echo',  help='Prints the search query URLs, for further use like piping or bookmarking.', action="store_true")
 sArgParser.add_argument('-ubb',  help='Updates bug bounty files (in en out scope) and exits. Uses bbrecon.', action="store_true")
-sArgParser.add_argument('-wait', metavar="<seconds>", help='Wait x seconds, defaults to 5 seconds.', default=5)
+sArgParser.add_argument('-wait', metavar="<seconds>", help='Wait x seconds, defaults to 7 seconds.', default=7)
 
 aArguments=sArgParser.parse_args()
 
@@ -67,7 +61,6 @@ if aArguments.ubb:
     import json
     from tldextract import extract
     
-    #sOutput = subprocess.check_output("bbrecon get scopes --type web --output json", shell=True)
     sOutput = subprocess.check_output("bbrecon get programs --type web -o json", shell=True)
     fCsvInScope = open(os.path.dirname(os.path.realpath(sys.argv[0])) + "/sitedorks-bbrecon-inscope.csv", 'w', buffering=1)
     fCsvOutScope = open(os.path.dirname(os.path.realpath(sys.argv[0])) + "/sitedorks-bbrecon-outscope.csv", 'w', buffering=1)
@@ -77,9 +70,6 @@ if aArguments.ubb:
     dDomainsOutScope = {}
     for sLine in OutputJson:
         sLine["slug"] = sLine["slug"].lower()
-        #print(sLine["in_scope"])
-        #print(sLine["out_scope"])
-        #print()
         for sInScope in sLine["in_scope"]:
             if sInScope["type"] == "web":
                 lInScopeValues = sInScope["value"].lower().split(",")
@@ -103,7 +93,7 @@ if aArguments.ubb:
                         sDomain = sOutScopeValue
                     else:
                         dl3, dl2, dl1 = extract(sOutScopeValue)
-                        sDomain = dl2 + "." + dl1
+                        sDomain = f"{dl2}.{dl1}"
     
                     if " " in sDomain or "*" in sDomain or sDomain.endswith(".") or sDomain.endswith(".onion"):
                         continue
@@ -127,9 +117,9 @@ if aArguments.ubb:
             continue
 
     if not bFailed:
-        print("sitedorks-bbrecon-inscope.csv and sitedorks-bbrecon-outscope.csv have been updated.")
+        print(f"sitedorks-bbrecon-inscope.csv and sitedorks-bbrecon-outscope.csv have been updated.")
     else:
-        print("Something went wrong while writing the files.")
+        print(f"Something went wrong while writing the files.")
         
     exit()
 
@@ -142,7 +132,7 @@ if not aArguments.cat and aArguments.query and not aArguments.help:
         exit()
 
 if aArguments.site == "inurl" and aArguments.engine != "google" and aArguments.engine != "duckduckgo":
-    print("inurl: only works with Google and DuckDuckGo.")
+    print(f"inurl: only works with Google and DuckDuckGo.")
     print()
     sArgParser.print_help()
     sys.exit(2)
@@ -156,7 +146,7 @@ else:
 if aArguments.count:
     iNewUrlAfter = int(aArguments.count)
     if aArguments.engine == "baidu":
-        print("Because of limitations with Baidu, -count is lowered to 2.")
+        print(f"Because of limitations with Baidu, -count is lowered to 2.")
         iNewUrlAfter = 2
 else:
     iNewUrlAfter = 14
@@ -191,45 +181,43 @@ try:
     lInputFile = fInputFile.readlines()
 
     if aArguments.help2:
-        GetComment()
+        get_comment()
+        
+    if aArguments.help2:
+        get_comment()
         
     if aArguments.cats:
-        sCatList = GetCat()
-        print()
-        print("Current categories on file are: " + sCatList)
-        print()
+        sCatList = get_categories()
+        print(f"\nCurrent categories on file are: \n{sCatList}\n")
         exit(0)
-        
+    
     if aArguments.help:
-        sCatList = GetCat()
+        sCatList = get_categories()
         sArgParser.print_help()
-        print()
-        print("Current categories on file are: " + sCatList)
-        print()
+        print(f"\nCurrent categories on file are: \n{sCatList}\n")
         exit(0)
     elif not aArguments.query:
-        print("sitedorks: error: the following argument is required: -query")
+        print(f"sitedorks: error: the following argument is required: -query")
         exit(2)
 except FileNotFoundError:
     print(sInputFile + " not found...")
     exit(2)
 
+SEARCH_ENGINES = {
+    "google": "https://www.google.com/search?num=100&filter=0&q=",
+    "baidu": "https://www.baidu.com/s?wd=",
+    "bing": "https://www.bing.com/search?&count=100&q=",
+    "bing-ecosia": "https://www.ecosia.org/search?&q=",
+    "duckduckgo": "https://duckduckgo.com/?q=",
+    "yandex": "https://yandex.com/search/?text=",
+    "yahoo": "https://search.yahoo.com/search?n=100&p="
+}
 
-if aArguments.engine == "google":
-    sQuery = "https://www.google.com/search?num=100&filter=0&q=" + urllib.parse.quote(aArguments.query) + "+AND+("
-elif aArguments.engine == "baidu":
-    sQuery = "https://www.baidu.com/s?wd=" + urllib.parse.quote(aArguments.query) + "+("
-elif aArguments.engine == "bing":
-    sQuery = "https://www.bing.com/search?&count=100&q=" + urllib.parse.quote(aArguments.query) + "+AND+("
-elif aArguments.engine == "bing-ecosia":
-    sQuery = "https://www.ecosia.org/search?&q=" + urllib.parse.quote(aArguments.query) + "+AND+("
-elif aArguments.engine == "duckduckgo":
-    sQuery = "https://duckduckgo.com/?q=" + urllib.parse.quote(aArguments.query) + "+AND+("
-elif aArguments.engine == "yandex":
-    sQuery = "https://yandex.com/search/?text=" + urllib.parse.quote(aArguments.query) + "+AND+("
-elif aArguments.engine == "yahoo":
-    sQuery = "https://search.yahoo.com/search?n=100&p=" + urllib.parse.quote(aArguments.query) + "+AND+("
-
+if aArguments.engine in SEARCH_ENGINES:
+    sQuery = SEARCH_ENGINES[aArguments.engine] + urllib.parse.quote(aArguments.query) + "+AND+("
+else:
+    # handle invalid search engine
+    raise ValueError("Invalid search engine specified")
 
 iFirst = 0
 iCount = 0
@@ -239,7 +227,7 @@ dQuery = {}
 if aArguments.cat:
     iLines = sum(1 for s in lInputFile if "," + aArguments.cat in s)
     if iLines == 0:
-        print("Category '" + aArguments.cat + "' not found, exiting...")
+        print(f"Category '" + aArguments.cat + "' not found, exiting...")
         exit(2)
 else:
     iLines = len(open(sInputFile).readlines())
@@ -266,7 +254,7 @@ for sInputFileLine in lInputFile:
         if aArguments.cat and lInputFileLineCsv[1] not in lCategory:
             continue
     except:
-        print("Error in CSV file")
+        print(f"Error in CSV file")
 
     iCount += 1
     if iFirst == 0:
@@ -282,13 +270,12 @@ for sInputFileLine in lInputFile:
         iUrls += 1
         iFirst = 0
 
+for i in range(len(dQuery)):
+    sSingleQuery = dQuery.get(i, '')
+    if sSingleQuery:
+        if aArguments.echo:
+            print(sSingleQuery)
+        
+        webbrowser.get(aArguments.browser).open(sSingleQuery + sEndQuery)
+        time.sleep(int(aArguments.wait))
 
-dQuery[iUrls] += sEndQuery
-
-
-for sSingleQuery in dQuery.values():
-    if aArguments.echo:
-        print(sSingleQuery)
-    
-    webbrowser.open(sSingleQuery)
-    time.sleep(int(aArguments.wait))

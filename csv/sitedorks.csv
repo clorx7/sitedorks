@@ -50,6 +50,7 @@ bgp.he.net,analysis
 bit.do,shortener
 bit.ly,shortener
 bitly.com,shortener
+bitbucket.io,dev
 bitbucket.org,dev
 bitchute.com,social
 blackbaud.com,cloud
@@ -60,10 +61,12 @@ bmetrack.com,comm
 boards.420chan.org,social
 boards.4chan.org,social
 books.google.com,docs
+boosty.to,fin
 box.net/shared,storage
 buff.ly,shortener
 business.site,orgs
 buymeacoffee.com,fin
+cdn.cloudflare.net,cloud
 censys.io,analysis
 change.org,social
 chat.whatsapp.com,comm
@@ -72,6 +75,7 @@ ci.appveyor.com,dev
 citizenlab.co,orgs
 clickdimensions.com/c,comm
 click.mlsend.com/link,comm
+clicktime.symantec.com,comm
 cloud.google.com,cloud
 cloud.ovh.net,cloud
 cloudapp.azure.com,cloud
@@ -94,6 +98,7 @@ cognitodocs.com,docs
 colab.research.google.com,docs
 comments.bot,social
 community.spiceworks.com,social
+comparably.com/companies,orgs
 compliancerank.com/c,orgs
 conta.cc,comm
 convertkit-mail.com,comm
@@ -141,7 +146,7 @@ disforge.com/server,comm
 disq.us,social
 disqus.com,social
 dlvr.it,shortener
-dnb.com,orgs
+dnb.com/business-directory,orgs
 docdro.id,docs
 docdroid.net,docs
 docplayer.net,docs
@@ -428,6 +433,7 @@ sharepoint.com,docs
 shopify.com,cloud
 shorturl.at,shortener
 signalhire.com/companies,orgs
+simplybook.me,orgs
 sites.google.com,cloud
 slack.com,comm
 slashdot.org,social
@@ -492,6 +498,7 @@ typeform.com,forms
 typepad.com,cloud
 ultipro.com,cloud
 upwork.com,orgs
+urldefense.proofpoint.com,comm
 urlscan.io,analysis
 usermanual.wiki,docs
 uservoice.com,social
@@ -522,6 +529,7 @@ wpmucdn.com,docs
 wufoo.com,cloud
 www.borza.com,orgs
 www.trackyserver.com/server,comm
+xmind.app,docs
 xmind.net,docs
 y2u.be,social
 yadi.sk,storage
